@@ -1,9 +1,26 @@
-# Version mit Klasse und Multi Return
+# Version mit Klasse und Multi Return und Funktion anstatt Methoden. Wobei man auch static hätte benutzen können.
 
 from random import uniform, randint, choice
 
 
 timer = 1
+
+
+def generiere_preise():
+    kornpreis_kaufen = randint(30, 60)
+    kornpreis_verkaufen = randint(20, 50)
+    landpreis_kaufen = randint(70, 100)
+    landpreis_verkaufen = randint(50, 80)
+    return kornpreis_kaufen, kornpreis_verkaufen, landpreis_kaufen, landpreis_verkaufen
+
+
+def auswahl_konsum():
+    print("Wie viel Korn dürfen die Bürger konsumieren?")
+    korn_auswahl = input("Minimum = 1 / Durchschnitt = 3 / Maximum = 5  ")
+    while korn_auswahl != "1" and korn_auswahl != "3" and korn_auswahl != "5":
+        korn_auswahl = input("Bitte erneut eingeben: Minimum = 1 / Durchschnitt = 3 / Maximum = 5 ")
+
+    return korn_auswahl
 
 
 class Game(object):
@@ -19,14 +36,6 @@ class Game(object):
         self.maerkte_anzahl = maerkte_anzahl
         self.land_anzahl = land_anzahl
         self.korn_vorhanden = korn_vorhanden
-
-
-    def generiere_preise(self):
-        kornpreis_kaufen = randint(30, 60)
-        kornpreis_verkaufen = randint(20, 50)
-        landpreis_kaufen = randint(70, 100)
-        landpreis_verkaufen = randint(50, 80)
-        return kornpreis_kaufen, kornpreis_verkaufen, landpreis_kaufen, landpreis_verkaufen
 
 
     def anzeige(self):
@@ -109,15 +118,6 @@ class Game(object):
             print()
 
 
-    def auswahl_konsum(self):
-        print("Wie viel Korn dürfen die Bürger konsumieren?")
-        korn_auswahl = input("Minimum = 1 / Durchschnitt = 3 / Maximum = 5  ")
-        while korn_auswahl != "1" and korn_auswahl != "3" and korn_auswahl != "5":
-            korn_auswahl = input("Bitte erneut eingeben: Minimum = 1 / Durchschnitt = 3 / Maximum = 5 ")
-
-        return korn_auswahl
-
-
     def berechnungen(self):
         if korn_auswahl == "1":
             self.korn_vorhanden -= self.bevoelkerung_gesamt * 0.5
@@ -148,11 +148,11 @@ class Game(object):
 player_1 = Game("Tobi", 1, 1700, "Baron", 1000, 20000, 2, 1, 100, 10000)
 
 while timer <= 10:
-    kornpreis_kaufen, kornpreis_verkaufen, landpreis_kaufen, landpreis_verkaufen = player_1.generiere_preise()
+    kornpreis_kaufen, kornpreis_verkaufen, landpreis_kaufen, landpreis_verkaufen = generiere_preise()
     player_1.anzeige()
     player_1.auswahl_kauf_verkauf()
     player_1.auswahl_erweiterung()
-    korn_auswahl = player_1.auswahl_konsum()
+    korn_auswahl = auswahl_konsum()
     player_1.berechnungen()
     player_1.erzeuge_korn()
     player_1.counter()
