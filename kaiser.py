@@ -1,10 +1,6 @@
-# auf Version 6 aufbauend mit diversen Verbesserungen
-# Checked ob genug Geld vorhanden zum Kauf von Korn oder Land
-# Checked ob genug Korn und Land vorhanden beim Verkauf des selbigen
-# Checked ob genügend Geld zum Bau von Markt oder Mühle vorhanden ist
-# added titel_tupel and changed titel to int. added function befoerderung
-# added spielende plus variable game_continue
-# added Abfrage Anzahl Spieler, Check ob int, Eingabe der Namen plus Instanziierung mehrerer Spieler
+# added function "check_ob_digit" to check if input is int or string and convert it--> deleted 16 lines of code
+# fixed titel progression.
+# descending is not possible anymore. only 1 ascend per turn
 
 from random import uniform, randint, choice
 
@@ -12,17 +8,18 @@ from random import uniform, randint, choice
 game_continue = True
 titel_tupel = ("Baron", "Graf", "Fürst", "Herzog", "Kurfürst", "Großherzog", "König", "Kaiser")
 
-anzahl_spieler_str = input("Wie viele Spieler?")    # Anzahl der Spieler plus check ob int
+
+anzahl_spieler_str = input("Wie viele Spieler?")
 while anzahl_spieler_str.isdigit() is False:
     anzahl_spieler_str = input("Bitte erneut eingeben: Wie viele Spieler?")
 anzahl_spieler = int(anzahl_spieler_str)
 
 spieler_liste = []
-for spieler in range(anzahl_spieler):       # Namen der Spieler speichern.
+for spieler in range(anzahl_spieler):
     print("Spieler ", spieler)
     spieler_name = input("Name: ")
     print()
-    spieler_liste.append(spieler_name)       # spieler_name werden in Liste spieler_liste gespeichert.
+    spieler_liste.append(spieler_name)
 
 
 def generiere_preise():
@@ -38,8 +35,15 @@ def auswahl_konsum():
     korn_auswahl = input("Minimum = 1 / Durchschnitt = 3 / Maximum = 5  ")
     while korn_auswahl != "1" and korn_auswahl != "3" and korn_auswahl != "5":
         korn_auswahl = input("Bitte erneut eingeben: Minimum = 1 / Durchschnitt = 3 / Maximum = 5 ")
-
     return korn_auswahl
+
+
+def check_ob_digit(menge_str):      # Abfrage wurde stets wiederholt also in Funktion ausgelagert
+    while menge_str.isdigit() is False:
+        menge_str = input("Bitte erneut eingeben: Wie viel möchten sie handeln?")
+        print()
+    menge = int(menge_str)
+    return menge
 
 
 class Game(object):
@@ -89,17 +93,12 @@ class Game(object):
             if kaufwahl == "k":
                 menge_str = input("Wie viel Korn möchten sie kaufen?")
                 print()
-                while menge_str.isdigit() is False:
-                    menge_str = input("Bitte erneut eingeben: Wie viel möchten sie kaufen?")
-                    print()
-                menge = int(menge_str)
+                menge = check_ob_digit(menge_str)       # hier wird neue funktion aufgerufen
 
                 while self.geld <= menge * kornpreis_kaufen:
                     menge_str = input("Das können sie sich nicht leisten. Bitte eine niedrigere Anzahl eingeben: ")
-                    while menge_str.isdigit() is False:
-                        menge_str = input("Bitte erneut eingeben: Wie viel möchten sie kaufen?")
-                        print()
-                    menge = int(menge_str)
+                    menge = check_ob_digit(menge_str)
+
                 else:
                     self.korn_vorhanden += menge
                     self.geld -= menge * kornpreis_kaufen
@@ -107,17 +106,12 @@ class Game(object):
             else:
                 menge_str = input("Wie viel Land möchten sie kaufen?")
                 print()
-                while menge_str.isdigit() is False:
-                    menge_str = input("Bitte erneut eingeben: Wie viel möchten sie kaufen?")
-                    print()
-                menge = int(menge_str)
+                menge = check_ob_digit(menge_str)
 
                 while self.geld <= menge * landpreis_kaufen:
                     menge_str = input("Das können sie sich nicht leisten. Bitte eine niedrigere Anzahl eingeben: ")
-                    while menge_str.isdigit() is False:
-                        menge_str = input("Bitte erneut eingeben: Wie viel möchten sie kaufen?")
-                        print()
-                    menge = int(menge_str)
+                    menge = check_ob_digit(menge_str)
+
                 else:
                     self.land_anzahl += menge
                     self.geld -= menge * landpreis_kaufen
@@ -130,17 +124,12 @@ class Game(object):
             if verkaufwahl == "k":
                 menge_str = input("Wie viel Korn möchten sie verkaufen?")
                 print()
-                while menge_str.isdigit() is False:
-                    menge_str = input("Bitte erneut eingeben: Wie viel möchten sie verkaufen?")
-                    print()
-                menge = int(menge_str)
+                menge = check_ob_digit(menge_str)
 
                 while self.korn_vorhanden < menge:
                     menge_str = input("Soviel besitzen sie leider nicht. Bitte eine niedrigere Anzahl eingeben: ")
-                    while menge_str.isdigit() is False:
-                        menge_str = input("Bitte erneut eingeben: Wie viel möchten sie verkaufen?")
-                        print()
-                    menge = int(menge_str)
+                    menge = check_ob_digit(menge_str)
+
                 else:
                     self.korn_vorhanden -= menge
                     self.geld += menge * kornpreis_verkaufen
@@ -148,17 +137,12 @@ class Game(object):
             else:
                 menge_str = input("Wie viel Land möchten sie verkaufen?")
                 print()
-                while menge_str.isdigit() is False:
-                    menge_str = input("Bitte erneut eingeben: Wie viel möchten sie verkaufen?")
-                    print()
-                menge = int(menge_str)
+                menge = check_ob_digit(menge_str)
 
                 while self.land_anzahl < menge:
                     menge_str = input("Soviel besitzen sie leider nicht. Bitte eine niedrigere Anzahl eingeben: ")
-                    while menge_str.isdigit() is False:
-                        menge_str = input("Bitte erneut eingeben: Wie viel möchten sie verkaufen?")
-                        print()
-                    menge = int(menge_str)
+                    menge = check_ob_digit(menge_str)
+
                 else:
                     self.land_anzahl -= menge
                     self.geld += menge * landpreis_verkaufen
@@ -232,41 +216,38 @@ class Game(object):
         self.spieljahr += 1
 
 
-    def befoerderung(self):  # progression für aufstiegsrechte
-        if self.geld > 0 or self.land_anzahl > 0:
-            self.titel = 0
-
-        if self.geld > 20000 and self.bevoelkerung_gesamt > 2000 and self.land_anzahl > 200 and self.maerkte_anzahl > 2 and self.muehlen_anzahl > 2:
+    def befoerderung(self):  # vorher if anstatt elif benutzt und jetzt wird immer nur auf die nächste stufe geprüft
+        if self.titel == 0 and self.geld > 20000 and self.bevoelkerung_gesamt > 2000 and self.land_anzahl > 200 and self.maerkte_anzahl > 2 and self.muehlen_anzahl > 2:
             self.titel = 1
             print("Herzlichen Glückwunsch. Sie wurden zum " + titel_tupel[self.titel] + " befördert! ")
             print()
 
-        if self.geld > 30000 and self.bevoelkerung_gesamt > 3000 and self.land_anzahl > 300 and self.maerkte_anzahl > 3 and self.muehlen_anzahl > 3:
+        elif self.titel == 1 and self.geld > 30000 and self.bevoelkerung_gesamt > 3000 and self.land_anzahl > 300 and self.maerkte_anzahl > 3 and self.muehlen_anzahl > 3:
             self.titel = 2
             print("Herzlichen Glückwunsch. Sie wurden zum " + titel_tupel[self.titel] + " befördert! ")
             print()
 
-        if self.geld > 50000 and self.bevoelkerung_gesamt > 5000 and self.land_anzahl > 500 and self.maerkte_anzahl > 5 and self.muehlen_anzahl > 5:
+        elif self.titel == 2 and self.geld > 50000 and self.bevoelkerung_gesamt > 5000 and self.land_anzahl > 500 and self.maerkte_anzahl > 5 and self.muehlen_anzahl > 5:
             self.titel = 3
             print("Herzlichen Glückwunsch. Sie wurden zum " + titel_tupel[self.titel] + " befördert! ")
             print()
 
-        if self.geld > 60000 and self.bevoelkerung_gesamt > 6000 and self.land_anzahl > 600 and self.maerkte_anzahl > 6 and self.muehlen_anzahl > 6:
+        elif self.titel == 3 and self.geld > 60000 and self.bevoelkerung_gesamt > 6000 and self.land_anzahl > 600 and self.maerkte_anzahl > 6 and self.muehlen_anzahl > 6:
             self.titel = 4
             print("Herzlichen Glückwunsch. Sie wurden zum " + titel_tupel[self.titel] + " befördert! ")
             print()
 
-        if self.geld > 80000 and self.bevoelkerung_gesamt > 8000 and self.land_anzahl > 800 and self.maerkte_anzahl > 8 and self.muehlen_anzahl > 8 and self.palast_elemente > 3:
+        elif self.titel == 4 and self.geld > 80000 and self.bevoelkerung_gesamt > 8000 and self.land_anzahl > 800 and self.maerkte_anzahl > 8 and self.muehlen_anzahl > 8 and self.palast_elemente > 3:
             self.titel = 5
             print("Herzlichen Glückwunsch. Sie wurden zum " + titel_tupel[self.titel] + " befördert! ")
             print()
 
-        if self.geld > 90000 and self.bevoelkerung_gesamt > 9000 and self.land_anzahl > 900 and self.maerkte_anzahl > 9 and self.muehlen_anzahl > 9 and self.palast_elemente > 6:
+        elif self.titel == 5 and self.geld > 90000 and self.bevoelkerung_gesamt > 9000 and self.land_anzahl > 900 and self.maerkte_anzahl > 9 and self.muehlen_anzahl > 9 and self.palast_elemente > 6:
             self.titel = 6
             print("Herzlichen Glückwunsch. Sie wurden zum " + titel_tupel[self.titel] + " befördert! ")
             print()
 
-        if self.geld > 120000 and self.bevoelkerung_gesamt > 12000 and self.land_anzahl > 1200 and self.maerkte_anzahl > 12 and self.muehlen_anzahl > 12 and self.palast_elemente > 10:
+        elif self.titel == 6 and self.geld > 120000 and self.bevoelkerung_gesamt > 12000 and self.land_anzahl > 1200 and self.maerkte_anzahl > 12 and self.muehlen_anzahl > 12 and self.palast_elemente > 10:
             self.titel = 7
 
 
@@ -282,9 +263,9 @@ class Game(object):
 
 
 spieler_data = []
-for spieler in spieler_liste:       # instanziieren der Spieler
+for spieler in spieler_liste:
     spieler = Game(spieler, 1, 1700, 0, 1000, 10000, 0, 0, 100, 10000, 0)
-    spieler_data.append(spieler)        # speichern der Instanzen in leerer Liste
+    spieler_data.append(spieler)
 
 
 while game_continue is True:
