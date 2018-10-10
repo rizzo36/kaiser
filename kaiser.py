@@ -1,4 +1,4 @@
-# Version mit Klasse
+# Version mit Klasse und Multi Return
 
 from random import uniform, randint, choice
 
@@ -21,12 +21,15 @@ class Game(object):
         self.korn_vorhanden = korn_vorhanden
 
 
-    def anzeige(self):
-        global kornpreis_kaufen, kornpreis_verkaufen, landpreis_kaufen, landpreis_verkaufen
+    def generiere_preise(self):
         kornpreis_kaufen = randint(30, 60)
         kornpreis_verkaufen = randint(20, 50)
         landpreis_kaufen = randint(70, 100)
         landpreis_verkaufen = randint(50, 80)
+        return kornpreis_kaufen, kornpreis_verkaufen, landpreis_kaufen, landpreis_verkaufen
+
+
+    def anzeige(self):
         print("------------------")
         print("Runde:", self.runde)
         print(self.titel, self.vorname + " im Jahre", self.spieljahr)
@@ -115,7 +118,7 @@ class Game(object):
         return korn_auswahl
 
 
-    def berechnungen(self, korn_auswahl):
+    def berechnungen(self):
         if korn_auswahl == "1":
             self.korn_vorhanden -= self.bevoelkerung_gesamt * 0.5
             bevoelkerung_gestorben = self.bevoelkerung_gesamt * uniform(0.1, 0.2)
@@ -145,11 +148,12 @@ class Game(object):
 player_1 = Game("Tobi", 1, 1700, "Baron", 1000, 20000, 2, 1, 100, 10000)
 
 while timer <= 10:
+    kornpreis_kaufen, kornpreis_verkaufen, landpreis_kaufen, landpreis_verkaufen = player_1.generiere_preise()
     player_1.anzeige()
     player_1.auswahl_kauf_verkauf()
     player_1.auswahl_erweiterung()
     korn_auswahl = player_1.auswahl_konsum()
-    player_1.berechnungen(korn_auswahl)
+    player_1.berechnungen()
     player_1.erzeuge_korn()
     player_1.counter()
     timer += 1
